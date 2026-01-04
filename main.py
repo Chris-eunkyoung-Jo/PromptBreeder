@@ -9,7 +9,9 @@ import asyncio
 
 from dotenv import load_dotenv
 from rich import print
-import cohere
+#updated:Client->"ClaudeClient", 2025.12 due to claudeagentsdk
+#import cohere
+from pb.claude_client import ClaudeClient
 
 load_dotenv() # load environment variables
 

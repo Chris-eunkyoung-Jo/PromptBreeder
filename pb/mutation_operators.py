@@ -8,6 +8,7 @@ from pb.mutation_prompts import mutation_prompts
 from pb.thinking_styles import thinking_styles
 from pb import gsm
 from cohere import Client
+from pb.claude_client import ClaudeClient #updated, 2025.12
 
 from dotenv import load_dotenv
 from rich import print
@@ -20,8 +21,9 @@ gsm8k_examples = gsm.read_jsonl('pb/data/gsm.jsonl')
 # model = SentenceTransformer('multi-qa-distilbert-cos-v1')
 # print(model) 
 
-# Direct Mutation mutators
-def zero_order_prompt_gen(unit: EvolutionUnit, problem_description: str, model: Client, **kwargs) -> EvolutionUnit:
+# Direct Mutation mutators 
+#updated:Client->"ClaudeClient", 2025.12 due to claudeagentsdk
+def zero_order_prompt_gen(unit: EvolutionUnit, problem_description: str, model: "ClaudeClient", **kwargs) -> EvolutionUnit:
     """Generates a new task-prompt P by concatenating the problem description D with the prompt 
     'a list of 100 hints:'. New task-prompt P is the first generated hint.
     
@@ -40,7 +42,7 @@ def zero_order_prompt_gen(unit: EvolutionUnit, problem_description: str, model: 
     
     return unit 
 
-def first_order_prompt_gen(unit: EvolutionUnit, model: Client, **kwargs) -> EvolutionUnit:
+def first_order_prompt_gen(unit: EvolutionUnit, model: "ClaudeClient", **kwargs) -> EvolutionUnit:
     """Concatenate the mutation prompt M to the parent task-prompt P and pass it to the LLM to produce P'
     
     Returns: 

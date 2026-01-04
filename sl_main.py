@@ -15,7 +15,9 @@ import time
 
 from dotenv import load_dotenv
 from rich import print
-import cohere
+#updated:Client->"ClaudeClient", 2025.12 due to claudeagentsdk
+#import cohere
+from pb.claude_client import ClaudeClient
 
 load_dotenv() # load environment variables
 
@@ -52,11 +54,17 @@ if 'running' not in st.session_state:
 if 'histogram_data' not in st.session_state:
     st.session_state['histogram_data'] = {}
 
-if 'COHERE_API_KEY' not in st.session_state:
-    if 'COHERE_API_KEY' in os.environ:
-        st.session_state['COHERE_API_KEY'] = os.environ['COHERE_API_KEY']
+#if 'COHERE_API_KEY' not in st.session_state:
+#    if 'COHERE_API_KEY' in os.environ:
+#        st.session_state['COHERE_API_KEY'] = os.environ['COHERE_API_KEY']
+#    else:
+#        st.session_state['COHERE_API_KEY'] = ""
+
+if 'CLAUDE_API_KEY' not in st.session_state:
+    if 'CLAUDE_API_KEY' in os.environ:
+        st.session_state['CLAUDE_API_KEY'] = os.environ['CLAUDE_API_KEY']
     else:
-        st.session_state['COHERE_API_KEY'] = ""
+        st.session_state['CLAUDE_API_KEY'] = ""
 
 # thinking_styles dataframe
 ts_df = pd.DataFrame(
@@ -68,7 +76,9 @@ mp_df = pd.DataFrame(
     mutation_prompts
 )
 
-st.title('PromptBreeder + Cohere')
+#updated:Client->"ClaudeClient", 2025.12 due to claudeagentsdk
+#st.title('PromptBreeder + Cohere')
+st.title('PromptBreeder + Claude')
 st.markdown(f""""PROMPTBREEDER, a general-purpose self-referential self-improvement mechanism that evolves and adapts prompts for a given domain.
 Driven by an LLM, Promptbreeder mutates a population of task-prompts, evaluates them for fitness on a training set, and repeats this process
 over multiple generations to evolve task-prompts. Crucially, the mutation of these task-prompts is governed by mutation-prompts that the LLM 
@@ -88,7 +98,9 @@ There are 12 mutations outlined by the promptbreeder paper. Only 9 are implement
 where you can use those extra 3 mutations, but I can't promise they will be exactly the same as DeepMind's implementations.
 """)
 problem_description = st.text_input("problem description", value="Solve the math word problem, giving your answer as an arabic numeral.", key="pd")
-st.session_state.COHERE_API_KEY = st.text_input("Cohere PROD key", key="ch", type='password')
+#updated, 2025.12
+#st.session_state.COHERE_API_KEY = st.text_input("Cohere PROD key", key="ch", type='password')
+st.session_state.CLAUDE_API_KEY = st.text_input('Claude PROD key', key='ch', type='password')
 
 col1, col2, = st.columns(2)
 with col1:
@@ -139,6 +151,7 @@ if second_button:
     st.session_state.calls = st.session_state.evals*st.session_state.generations 
     st.session_state.start_time = time.time()
     st.session_state.running = True
+    #updated:Client->"ClaudeClient", 2025.12 due to claudeagentsdk
     co = cohere.Client(api_key=st.session_state.COHERE_API_KEY,  num_workers=st.session_state.evals, max_retries=5, timeout=60) #override the 2 min timeout with 60s. The APIs performance varies heavily. 
     st.session_state.population = init_run(st.session_state.population, co,  st.session_state.evals)
 
